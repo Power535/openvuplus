@@ -82,6 +82,27 @@ oe_runconf () {
 
 AUTOTOOLS_AUXDIR ?= "${S}"
 
+CONFIGURESTAMPFILE = "${WORKDIR}/configure.sstate"
+
+autotools_preconfigure() {
+	if [ -n "${CONFIGURESTAMPFILE}" -a -e "${CONFIGURESTAMPFILE}" ]; then
+		if [ "`cat ${CONFIGURESTAMPFILE}`" != "${BB_TASKHASH}" -a "${S}" != "${B}" ]; then
+			echo "Previously configured separate build directory detected, cleaning ${B}"
+			rm -rf ${B}
+			mkdir ${B}
+		fi
+	fi
+}
+
+autotools_postconfigure(){
+	if [ -n "${CONFIGURESTAMPFILE}" ]; then
+		echo ${BB_TASKHASH} > ${CONFIGURESTAMPFILE}
+	fi
+}
+
+do_configure[prefuncs] += "autotools_preconfigure"
+do_configure[postfuncs] += "autotools_postconfigure"
+
 autotools_do_configure() {
 	case ${PN} in
 	autoconf*)
@@ -154,9 +175,9 @@ autotools_do_configure() {
 			    cp ${STAGING_DATADIR}/gettext/config.rpath ${AUTOTOOLS_AUXDIR}/
 			    if [ -d ${S}/po/ -a ! -e ${S}/po/Makefile.in.in ]; then
 			      cp ${STAGING_DATADIR}/gettext/po/Makefile.in.in ${S}/po/
-	                      if [ ! -e ${S}/po/remove-potcdate.sin ]; then
-	                        cp ${STAGING_DATADIR_NATIVE}/gettext/po/remove-potcdate.sin ${S}/po/
-	                      fi
+                            fi
+                            if [ ! -e ${S}/po/remove-potcdate.sin ]; then
+                             cp ${STAGING_DATADIR}/gettext/po/remove-potcdate.sin ${S}/po/
                             fi
 			  fi
 			fi
