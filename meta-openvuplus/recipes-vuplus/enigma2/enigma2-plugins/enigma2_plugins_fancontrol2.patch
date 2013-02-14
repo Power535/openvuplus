@@ -1,0 +1,26 @@
+diff --git a/fancontrol2/CONTROL/control b/fancontrol2/CONTROL/control
+index a2cee72..d8dec7f 100644
+--- a/fancontrol2/CONTROL/control
++++ b/fancontrol2/CONTROL/control
+@@ -3,4 +3,4 @@ Version: 2.5
+ Description: Temperature dependent fan control
+ Maintainer: IHAD joergm6 <joergm6@www.i-have-a-dreambox.com>
+ Homepage: http://www.i-have-a-dreambox.com
+-Depends: enigma2 (>> 2.6)
++Depends: enigma2 (>> 2.6), enigma2-plugin-extensions-openwebif
+diff --git a/fancontrol2/src/plugin.py b/fancontrol2/src/plugin.py
+index 847cd6c..671bfa3 100644
+--- a/fancontrol2/src/plugin.py
++++ b/fancontrol2/src/plugin.py
+@@ -1045,9 +1045,8 @@ def Plugins(**kwargs):
+ 	list = [
+ 	PluginDescriptor(name="Fan Control", 
+ 	description="Fan Control 2", 
+-	where = [PluginDescriptor.WHERE_SESSIONSTART, 
+-	PluginDescriptor.WHERE_AUTOSTART], 
+-	fnc = autostart),
++	where = PluginDescriptor.WHERE_NETWORKCONFIG_READ,
++	fnc = autostart, weight=10),
+ 	PluginDescriptor(name="Fan Control", 
+ 	description="Fan Control 2", 
+ 	where = PluginDescriptor.WHERE_PLUGINMENU,
